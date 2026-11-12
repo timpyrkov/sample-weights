@@ -31,7 +31,8 @@ uv run python fetch_data.py
 uv run python correlations.py
 ```
 
-- `fetch_data.py`: downloads one NHANES table (pynhanes release, ~30 MB) into `data/`, checks its sha256.
+- Data come from [pynhanes](https://pypi.org/project/pynhanes/) 1.1.0 (installed by `uv sync`), which parses the public CDC NHANES files.
+- `fetch_data.py`: downloads the table pynhanes built (its GitHub release `data-v1`, ~30 MB) into `data/`, checks its sha256.
 - `correlations.py`: runs all cases in seconds; `correlations.py 3 5` runs some.
 - Output: results on screen; `output/case_N_*.png` (one figure per case); `output/results.csv`.
 - Method details: docstrings in `correlations.py`.
