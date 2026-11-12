@@ -1,7 +1,7 @@
 [project]
 name = "sample-weights"
 version = "0.2.0"
-description = "Survey-weighted correlations in NHANES next to their naive twins, for QA"
+description = "Survey-weighted correlations in NHANES next to their naive twins, for expert review"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

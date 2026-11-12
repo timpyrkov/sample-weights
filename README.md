@@ -1,7 +1,8 @@
-# sample-weights: NHANES sample weights, QA task
+# sample-weights: NHANES sample weights, expert review
 
-One correlation in 9 cases. Each case is computed the correct way (sample weights, strata, PSUs)
-next to its naive twin (no weights). **Task: tell us whether the weights are handled correctly.**
+One correlation in 9 cases. Each case is computed with the survey design (sample weights, strata, PSUs)
+next to its naive twin (no weights). **For review by an expert in statistics (survey methods) and
+bioinformatics: are the weights and the design handled correctly?**
 
 ## The variable pair
 
@@ -16,9 +17,9 @@ Analysis weight: **fasting** (the smaller subsample). Population: adults 20+, no
 
 ## Rules
 
-- Work in your own branch: `git checkout -b qa/<your-name>`. Never commit to `master`.
+- Work in your own branch: `git checkout -b review/<your-name>`. Never commit to `master`.
 - `data/` and `output/` are excluded from git sync (`.gitignore`). Do not add them.
-- Do not edit the code to make a check pass. Report it.
+- Code changes are welcome as proposals in your branch, each with its reason.
 
 ## Run
 
@@ -51,16 +52,18 @@ uv run python correlations.py
 | 8 | Filter age 30+ (rows deleted first: same) | 2017-18 | 0.199 / 0.0393 / 15 / 1,921 | 0.184 / 2,032 |
 | 9 | Filter Mexican American (rows deleted first: SE 0.0264, df 11) | 2017-18 | 0.151 / 0.0280 / 15 / 325 | 0.142 / 334 |
 
-## What to check
+## Review questions
 
-1. **Weight choice.** Fasting weight is right for BMI x fasting glucose (cases 1, 3). Check against NHANES docs.
-2. **Strata and PSUs.** SE and df come from the design, not from n (case 2).
-3. **Rescaling.** Dividing pooled weights by the number of surveys is right, and does not change r or SE (cases 4, 5, 7).
+1. **Weight choice.** Is the fasting weight right for BMI x fasting glucose (cases 1, 3)? Per NCHS guidelines.
+2. **Strata and PSUs.** Is the Taylor-linearised SE with df = PSUs - strata right (case 2)?
+3. **Rescaling.** Is dividing pooled weights by the number of surveys right, and does it leave r and SE unchanged (cases 4, 5, 7)?
 4. **Survey choice.** Starting at 2003 (1999-2002 need 4-year weights); pooling 2021-23 with 2017-18 (cases 5-7).
-5. **SE and df.** Recompute cases 1, 4, 9 with R `survey` / Stata `svy` / SAS. r, SE, df must agree.
-6. **Filters.** Subgroup as a domain, not deleted rows (cases 8, 9).
-7. **Naive twin.** Equals `scipy.stats.pearsonr` on the same rows.
+5. **Independent check.** Do cases 1, 4, 9 agree with R `survey` / Stata `svy` / SAS (r, SE, df)?
+6. **Filters.** Is a subgroup correctly analysed as a domain, not by deleting rows (cases 8, 9)?
+7. **Inference.** Fisher-z CI with t(df) quantile, p from t(df): acceptable for a design-based r?
+8. **Missing.** Anything a careful NHANES analysis of this pair should do and does not?
 
-## Reporting
+## Review notes
 
-Per finding: case, what you expected (with source), what you got. Commit notes to your branch, push, open a pull request. Do not merge.
+Per point: case, verdict (correct / incorrect / debatable), reasoning with a reference.
+Commit your notes and any checking code to your branch, push, open a pull request. Do not merge.

@@ -5,7 +5,7 @@
 
 Source: nhanes_userdata.csv.gz, one row per participant with named columns, sample weights,
 strata and PSUs, published by pynhanes (https://pypi.org/project/pynhanes/) as its GitHub
-release `data-v1` (built with pynhanes 1.1.0). The sha256 is fixed so every tester analyses
+release `data-v1` (built with pynhanes 1.1.0). The sha256 is fixed so every reviewer analyses
 the same rows: a mismatch means the release changed. Report it, do not continue.
 """
 from __future__ import annotations
