@@ -63,7 +63,13 @@ uv run python correlations.py
 7. **Inference.** Fisher-z CI with t(df) quantile, p from t(df): acceptable for a design-based r?
 8. **Missing.** Anything a careful NHANES analysis of this pair should do and does not?
 
-## Review notes
+## Feedback format
 
-Per point: case, verdict (correct / incorrect / debatable), reasoning with a reference.
-Commit your notes and any checking code to your branch, push, open a pull request. Do not merge.
+Everything in your branch, as one pull request (do not merge). Suggested time: 2-4 hours, questions 1-5 first.
+
+1. **`review/<your-name>.md`** (required, 1-2 pages, Markdown):
+   - verdict table: question | cases | correct / incorrect / debatable | one-line reason | reference;
+   - per incorrect or debatable point: what is wrong, effect on r / SE / p, suggested fix,
+     severity (critical: changes conclusions; minor: changes numbers; style).
+2. **Independent check** (optional, most valuable): e.g. an R `survey` script recomputing cases 1, 4, 9.
+3. **Code changes** (optional, clear errors only): separate commits, reason in each message.
