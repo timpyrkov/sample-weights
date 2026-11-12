@@ -1,0 +1,22 @@
+[project]
+name = "sample-weights"
+version = "0.2.0"
+description = "Survey-weighted correlations in NHANES next to their naive twins, for QA"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "pandas>=2.2",
+    "matplotlib>=3.9",
+    "pynhanes==1.1.0",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.6"]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 110

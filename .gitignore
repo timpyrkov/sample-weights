@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Downloaded NHANES tables and generated results (not kept in git)
+data/
+output/
