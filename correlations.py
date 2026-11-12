@@ -1,6 +1,6 @@
 """Survey-weighted correlation of BMI and fasting glucose in NHANES, next to its naive twin.
 
-    uv run python correlations.py          # all 8 cases
+    uv run python correlations.py          # all 9 cases
     uv run python correlations.py 3 5      # some cases
 
 The pair. The two variables come from different subsamples, so they have different weights:
@@ -221,22 +221,34 @@ def show(case: int, name: str, title: str, surveys: list[str], panels: list[list
 # ---- the cases -------------------------------------------------------------------------
 
 def case_1_one_survey() -> None:
-    """Base case: one survey, the fasting weight, the design-based SE.
+    """Base case: one survey, the fasting weight, the design-based SE. Every later case changes one thing."""
+    surveys = ["2017-2018"]
+    data = load(surveys)
+    show(1, "one_survey", "one survey", surveys,
+         [[weighted_corr(data, weight(data), adults(data), "fasting weight"),
+           naive_corr(data, adults(data))]])
 
-    A third line, "weights only", keeps the weights but treats rows as independent: r is the
-    same (r depends on the weights only), the SE is too small and df is n - 1, not 15.
+
+def case_2_strata_psu() -> None:
+    """Case 1 with and without strata and PSUs: what the design adds to the weights (rule 3).
+
+    "weights only" keeps the fasting weight but treats every row as an independent person
+    (one stratum, each row its own PSU), as a generic weighted-correlation routine does.
+    r is identical, because r depends on the weights only. The SE is too small and df is
+    n - 1 instead of 15 (30 PSUs - 15 strata): people of one PSU resemble each other, so
+    2,242 rows carry less information than 2,242 independent people, and p is far too small.
     Weights fix the estimate; strata and PSUs fix its uncertainty.
     """
     surveys = ["2017-2018"]
     data = load(surveys)
     w = weight(data)
-    show(1, "one_survey", "one survey", surveys,
+    show(2, "strata_psu", "with and without strata and PSUs", surveys,
          [[weighted_corr(data, w, adults(data), "fasting weight"),
            weighted_corr(data, w, adults(data), "fasting weight", "weights only", design=False),
            naive_corr(data, adults(data))]])
 
 
-def case_2_wrong_weight() -> None:
+def case_3_wrong_weight() -> None:
     """Case 1 with a mistake: the exam weight (the weight of BMI) instead of the fasting weight.
 
     The exam weight is positive for everyone examined, so it also keeps people outside the
@@ -244,13 +256,13 @@ def case_2_wrong_weight() -> None:
     """
     surveys = ["2017-2018"]
     data = load(surveys)
-    show(2, "wrong_weight", "the wrong weight (exam instead of fasting)", surveys,
+    show(3, "wrong_weight", "the wrong weight (exam instead of fasting)", surveys,
          [[weighted_corr(data, weight(data), adults(data), "fasting weight"),
            weighted_corr(data, weight(data, EXAM), adults(data), "exam weight", "mistake"),
            naive_corr(data, adults(data))]])
 
 
-def case_3_two_surveys() -> None:
+def case_4_two_surveys() -> None:
     """Two adjacent surveys pooled: each keeps its own fasting weight, divided by 2.
 
     "not divided" uses the raw weights: r and SE are identical, because a constant factor
@@ -259,14 +271,14 @@ def case_3_two_surveys() -> None:
     """
     surveys = ["2015-2016", "2017-2018"]
     data = load(surveys)
-    show(3, "two_surveys", "two surveys pooled (weight / 2)", surveys,
+    show(4, "two_surveys", "two surveys pooled (weight / 2)", surveys,
          [[weighted_corr(data, weight(data), adults(data), "fasting weight / 2"),
            weighted_corr(data, weight(data, divide=False), adults(data), "fasting weight",
                          "not divided"),
            naive_corr(data, adults(data))]])
 
 
-def case_4_all_surveys() -> None:
+def case_5_all_surveys() -> None:
     """All eight 2-year surveys 2003-2018 pooled, weight / 8.
 
     Starts at 2003: 1999-2000 + 2001-2002 need the special 4-year weights. The naive SE keeps
@@ -274,12 +286,12 @@ def case_4_all_surveys() -> None:
     """
     surveys = [f"{y}-{y + 1}" for y in range(2003, 2018, 2)]
     data = load(surveys)
-    show(4, "all_surveys", "all 2-year surveys 2003-2018 pooled (weight / 8)", surveys,
+    show(5, "all_surveys", "all 2-year surveys 2003-2018 pooled (weight / 8)", surveys,
          [[weighted_corr(data, weight(data), adults(data), "fasting weight / 8"),
            naive_corr(data, adults(data))]])
 
 
-def case_5_pre_post_covid() -> None:
+def case_6_pre_post_covid() -> None:
     """Before (2017-2018) and after (2021-2023) the pandemic, compared, not pooled.
 
     Each survey on its own with its own undivided weight (df 15 each). The surveys are
@@ -291,12 +303,12 @@ def case_5_pre_post_covid() -> None:
         data = load([s])
         wtd.append(weighted_corr(data, weight(data), adults(data), "fasting weight", group=s))
         nai.append(naive_corr(data, adults(data), group=s))
-    show(5, "pre_post_covid", "before and after the pandemic, compared", surveys,
+    show(6, "pre_post_covid", "before and after the pandemic, compared", surveys,
          [[wtd[0], nai[0]], [wtd[1], nai[1]]], footer=(difference(*wtd), difference(*nai)))
 
 
-def case_6_across_covid() -> None:
-    """2017-2018 and 2021-2023 pooled, weight / 2, as in case 3.
+def case_7_across_covid() -> None:
+    """2017-2018 and 2021-2023 pooled, weight / 2, as in case 4.
 
     The arithmetic is the same, but 2021-2023 was sampled and weighted differently after the
     pandemic and 2019-2020 is missing: the result averages two periods, it is not a 2017-2023
@@ -304,14 +316,14 @@ def case_6_across_covid() -> None:
     """
     surveys = ["2017-2018", "2021-2023"]
     data = load(surveys)
-    show(6, "across_covid", "pooled across the pandemic (weight / 2)", surveys,
+    show(7, "across_covid", "pooled across the pandemic (weight / 2)", surveys,
          [[weighted_corr(data, weight(data), adults(data), "fasting weight / 2"),
            naive_corr(data, adults(data))]],
-         note="two periods and two designs averaged; compare with case 5")
+         note="two periods and two designs averaged; compare with case 6")
 
 
 def _filtered(case: int, name: str, title: str, group: str, member) -> None:
-    """Cases 7 and 8: a filter as a domain (correct) and with the other rows deleted first (mistake)."""
+    """Cases 8 and 9: a filter as a domain (correct) and with the other rows deleted first (mistake)."""
     surveys = ["2017-2018"]
     data = load(surveys)
     w = weight(data)
@@ -324,32 +336,32 @@ def _filtered(case: int, name: str, title: str, group: str, member) -> None:
            naive_corr(data, domain, group)]])
 
 
-def case_7_age_filter() -> None:
-    """Filter by age (60+), analysed as a domain (rule 4).
+def case_8_age_filter() -> None:
+    """Filter by age (30+), analysed as a domain (rule 4).
 
-    "mistake" deletes the other rows first. Older adults live in every PSU, so here no PSU is
-    lost and both give the same SE and df: harmless by luck, see case 8.
+    "mistake" deletes the other rows first. Adults 30+ live in every PSU, so here no PSU is
+    lost and both give the same SE and df: harmless by luck, see case 9.
     """
-    _filtered(7, "age_filter", "filtered by age (60+)", "Age 60+", lambda d: d[AGE] >= 60)
+    _filtered(8, "age_filter", "filtered by age (30+)", "Age 30+", lambda d: d[AGE] >= 30)
 
 
-def case_8_ethnicity_filter() -> None:
+def case_9_ethnicity_filter() -> None:
     """Filter by ethnicity (Mexican American), analysed as a domain (rule 4).
 
     Mexican Americans are absent from some PSUs. Deleting the other rows first drops those
     PSUs, strata left with one PSU add no variance: the SE shrinks and df falls from 15 to 11.
     """
-    _filtered(8, "ethnicity_filter", "filtered by ethnicity (Mexican American)",
+    _filtered(9, "ethnicity_filter", "filtered by ethnicity (Mexican American)",
               "Mexican American", lambda d: d[ETHNICITY] == 1)
 
 
-CASES = [case_1_one_survey, case_2_wrong_weight, case_3_two_surveys, case_4_all_surveys,
-         case_5_pre_post_covid, case_6_across_covid, case_7_age_filter, case_8_ethnicity_filter]
+CASES = [case_1_one_survey, case_2_strata_psu, case_3_wrong_weight, case_4_two_surveys,
+         case_5_all_surveys, case_6_pre_post_covid, case_7_across_covid, case_8_age_filter, case_9_ethnicity_filter]
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("cases", nargs="*", type=int, help="case numbers 1-8 (default: all)")
+    ap.add_argument("cases", nargs="*", type=int, help="case numbers 1-9 (default: all)")
     args = ap.parse_args()
     bad = fetch_data.problems()
     if bad:
