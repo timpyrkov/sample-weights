@@ -59,10 +59,9 @@ uv run python correlations.py
 2. **Strata and PSUs.** Is the Taylor-linearised SE with df = PSUs - strata right (case 2)?
 3. **Rescaling.** Is dividing pooled weights by the number of surveys right, and does it leave r and SE unchanged (cases 4, 5, 7)?
 4. **Survey choice.** Starting at 2003 (1999-2002 need 4-year weights); pooling 2021-23 with 2017-18 (cases 5-7).
-5. **Independent check.** Do cases 1, 4, 9 agree with R `survey` / Stata `svy` / SAS (r, SE, df)?
-6. **Filters.** Is a subgroup correctly analysed as a domain, not by deleting rows (cases 8, 9)?
-7. **Inference.** Fisher-z CI with t(df) quantile, p from t(df): acceptable for a design-based r?
-8. **Missing.** Anything a careful NHANES analysis of this pair should do and does not?
+5. **Filters.** Is a subgroup correctly analysed as a domain, not by deleting rows (cases 8, 9)?
+6. **Inference.** Fisher-z CI with t(df) quantile, p from t(df): acceptable for a design-based r?
+7. **Missing.** Anything a careful NHANES analysis of this pair should do and does not?
 
 ## Feedback format
 
@@ -72,5 +71,4 @@ Everything in your branch, as one pull request (do not merge). Suggested time: 2
    - verdict table: question | cases | correct / incorrect / debatable | one-line reason | reference;
    - per incorrect or debatable point: what is wrong, effect on r / SE / p, suggested fix,
      severity (critical: changes conclusions; minor: changes numbers; style).
-2. **Independent check** (optional, most valuable): e.g. an R `survey` script recomputing cases 1, 4, 9.
-3. **Code changes** (optional, clear errors only): separate commits, reason in each message.
+2. **Code changes** (optional, clear errors only): separate commits, reason in each message.
