@@ -48,10 +48,10 @@ uv run python correlations.py
 | 5 | All 2-year surveys, weight / 8 | 2003-18 | 0.222 / 0.0102 / 124 / 17,620 | 0.183 / 18,991 |
 | 6 | Pre vs post COVID, compared: 2017-18 | 2017-18 | 0.196 / 0.0364 / 15 / 2,242 | 0.183 / 2,374 |
 |   | 2021-23 | 2021-23 | 0.163 / 0.0260 / 15 / 2,907 | 0.152 / 3,147 |
-|   | difference | | 0.034 / 0.0447 / 30 | 0.031 |
+|   | difference | | 0.034 / 0.0447 / 27.2 | 0.031 |
 | 7 | Pre + post COVID, pooled, weight / 2 | 2017-18, 2021-23 | 0.178 / 0.0222 / 30 / 5,149 | 0.166 / 5,521 |
 | 8 | Filter age 30+ (rows deleted first: same) | 2017-18 | 0.199 / 0.0393 / 15 / 1,921 | 0.184 / 2,032 |
-| 9 | Filter Mexican American (rows deleted first: SE 0.0264, df 11) | 2017-18 | 0.151 / 0.0280 / 15 / 325 | 0.142 / 334 |
+| 9 | Filter Mexican American (rows deleted first: SE 0.0264) | 2017-18 | 0.151 / 0.0280 / 9 / 325 | 0.142 / 334 |
 
 ## Review questions
 
